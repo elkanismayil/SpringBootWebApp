@@ -4,6 +4,7 @@ import com.company.springboot.entity.User;
 import com.company.springboot.repository.UserRepository;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
@@ -16,6 +17,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 @Rollback(value = false)
 public class UserRepositoryTest {
 
+    @Qualifier("userRepository")
     @Autowired
     private UserRepository repo;
 

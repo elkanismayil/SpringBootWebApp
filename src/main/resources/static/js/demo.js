@@ -1,19 +1,41 @@
 function myFunction() {
-    let td, i, txtValue;
-    const input = document.querySelector("#myInput");
-    const filter = input.value.toUpperCase();
-    const table = document.querySelector("#myTable");
-    const tr = table.getElementsByTagName('TR');
+    $(function () {
+        $("#myInput").on("keyup", function () {
+            const value = $(this).val().toLowerCase();
+            $("#myTable #myTr").filter(function () {
+                $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1)
+            });
+        });
+    });
 
-    for (i = 0; i < tr.length; i++) {
-        td = tr[i].getElementsByTagName('TD')[0];
-        if (td) {
-            txtValue = td.textContent || td.innerText;
-            if (txtValue.toUpperCase().indexOf(filter) > -1) {
-                tr[i].style.display = "";
-            } else {
-                tr[i].style.display = "none";
-            }
-        }
-    }
 }
+
+$(function() {
+
+    $('.table #myEditBtn').on('click',function(event){
+
+        event.preventDefault();
+
+        const href= $(this).attr('href');
+
+        $.get(href, function(user, status){
+            $('#idEdit').val(user.id);
+            $('#emailEdit').val(user.email);
+            $('#passwordEdit').val(user.password);
+            $('#firstNameEdit').val(user.firstName);
+            $('#lastNameEdit').val(user.lastName.substr(0,10));
+        });
+
+        $('#editModal').modal();
+
+    });
+
+    $('.table #myDelBtn').on('click',function(event) {
+        event.preventDefault();
+        const href = $(this).attr('href');
+        $('#deleteModal #delRef').attr('href', href);
+        $('#deleteModal').modal();
+
+    });
+
+});

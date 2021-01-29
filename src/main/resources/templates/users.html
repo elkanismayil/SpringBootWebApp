@@ -3,19 +3,25 @@
 <head>
     <meta charset="UTF-8">
     <title>Users List Page</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta1/dist/css/bootstrap.min.css" rel="stylesheet"
-          integrity="sha384-giJF6kkoqNQ00vy+HMDP7azOuL0xtbfIcaT9wjKHr8RbDVddVHyTfAAsrekwKmP1"
-          crossorigin="anonymous">
+    <link href="/webjars/bootstrap/4.3.1/css/bootstrap.css" rel="stylesheet"/>
+    <script type="text/javascript" src="/webjars/jquery/3.4.1/jquery.min.js"></script>
+    <script type="text/javascript" src="/webjars/bootstrap/4.3.1/js/bootstrap.min.js"></script>
+    <script src="https://kit.fontawesome.com/66b2e88041.js" crossorigin="anonymous"></script>
+<!--    <script src="https://kit.fontawesome.com/5aeef2e5dd.js" crossorigin="anonymous"></script>-->
     <script type="text/javascript" th:src="@{/js/demo.js}"></script>
+    <link rel="stylesheet" th:href="@{/css/myHover.css}">
 </head>
 <body>
 <div>
     <nav class="navbar navbar-dark bg-primary">
         <div class="container-fluid">
-           <a class="navbar-brand" href="/logout">Sign Out</a>
+            <span>
+            <a class="navbar-brand" th:href="@{/signup}" title="Sign In" style="color: #000000; text-decoration: none"><i class="fas fa-sign-in-alt" style="width: 1.5rem"></i></a>
+            <a class="navbar-brand" href="/logout" title="Sign Out" style="color: #000000; text-decoration: none"><i class="fa fa-sign-out" aria-hidden="true" style="width: 1.5rem"></i></a>
+            </span>
             <form class="d-flex">
-                <input class="form-control me-2" id="myInput" onkeyup="myFunction()" type="search" placeholder="Search" aria-label="Search">
-                <button class="btn btn-outline-success" type="submit">Search</button>
+                <input class="form-control me-2" id="myInput" onkeyup="myFunction()" type="search" placeholder="Search"
+                       aria-label="Search">
             </form>
         </div>
     </nav>
@@ -29,45 +35,164 @@
                     <h1 class="display-5">Welcome</h1>
                 </blockquote>
                 <figcaption class="blockquote-footer">
-                    something like this <cite title="Source Title">[[${#request.userPrincipal.principal.fullName}]]</cite>
+                    something like this <cite
+                        title="Source Title">[[${#request.userPrincipal.principal.fullName}]]</cite>
                 </figcaption>
             </figure>
-<!--            <p>-->
-<!--                Welcome <b>[[${#request.userPrincipal.principal.fullName}]]</b>-->
-<!--            </p>-->
-<!--            <input type="submit" value="Sign Out" />-->
+
         </form>
     </div>
     <div>
         <h1>List of All Users</h1>
     </div>
     <div>
-        <table id="myTable" class="table table-hover table-bordered">
+
+        <table id="myTable" class="table table-bordered">
             <thead class="table-dark">
             <tr>
                 <th>User ID</th>
                 <th>E-mail</th>
                 <th>First Name</th>
                 <th>Last Name</th>
+                <th>Actions</th>
             </tr>
             </thead>
             <tbody>
-            <tr th:each="user: ${listUser}">
+            <tr th:each="user: ${listUser}" id="myTr">
                 <td th:text="${user.id}">User ID</td>
                 <td th:text="${user.email}">Email</td>
                 <td th:text="${user.firstName}">First Name</td>
                 <td th:text="${user.lastName}">Last Name</td>
+                <td>
+                    <!--Edit Button-->
+                   <a th:href="@{/get-one/(id=${user.id})}" id="myEditBtn" style="font-size: 1.5rem" >
+                       <i class="fas fa-user-edit"></i></a>
+                    &nbsp;&nbsp;&nbsp;
+                    <!--Delete Button-->
+                    <a th:href="@{/delete/(id=${user.id})}" id="myDelBtn" style="font-size: 1.5rem"><i class="fas fa-user-times" style="color: #ea4335;"></i></a>
+                </td>
+
             </tr>
             </tbody>
         </table>
+
+            <!-- Pagination -->
+        <div>
+           <em>Total Rows : [[${totalRows}]] || Page [[${currentPage}]] of [[${totalPages}]]</em>
+        </div>
+        <br/>
+        <nav aria-label="Page navigation example">
+            <ul class="pagination">
+                <li class="page-link">
+                    <a th:if="${currentPage > 1}" th:href="@{'/page/'+ ${totalPages - currentPage}}">First</a>
+                    <span th:unless="${currentPage > 1}">1</span>
+                </li>
+
+                <li class="page-item">
+                    <a class="page-link" th:if="${currentPage > 1}" th:href="@{'/page/' + ${currentPage - 1}}">Previous</a>
+                </li>
+
+                <span th:each="i : ${#numbers.sequence(1, totalPages)}">
+                    <li class="page-item">
+                        <a class="page-link" th:if="${i != currentPage}" th:href="@{'/page/' + ${i}}">[[${i}]]</a>
+                    </li>
+                </span>
+
+                <li class="page-item">
+                    <a class="page-link" th:if="${currentPage < totalPages}" th:href="@{'/page/' + ${currentPage + 1}}">Next</a>
+                </li>
+
+                <li class="page-link">
+                    <a th:if="${currentPage < totalPages}" th:href="@{'/page/' + ${totalPages}}">Last</a>
+                    <span th:unless="${currentPage < totalPages}">Last</span>
+                </li>
+
+
+            </ul>
+        </nav>
+
     </div>
 </div>
 
-<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"
-        integrity="sha384-q2kxQ16AaE6UbzuKqyBE9/u/KzioAlnx2maXQHiDX9d4/zp8Ok3f+M7DPm+Ib6IU"
-        crossorigin="anonymous"></script>
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta1/dist/js/bootstrap.min.js"
-        integrity="sha384-pQQkAEnwaBkjpqZ8RU1fF1AKtTcHJwFl3pblpTlHXybJjHpMYo79HY3hIi4NKxyj"
-        crossorigin="anonymous"></script>
+                <!-- Edit Modal -->
+
+<div class="modal fade" id="editModal" tabindex="-1" role="dialog" aria-labelledby="ModalLabel" aria-hidden="true">
+    <form th:action="@{/update}" method="post">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="editModalLabel">Edit User</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <!-- İd -->
+                    <div class="form-group">
+                        <input type="hidden" class="form-control" id="idEdit" name="id">
+                    </div>
+                    <!-- Email Edit -->
+                    <div class="form-group">
+                        <label for="emailEdit" class="col-form-label">Email:</label>
+                        <input type="text" class="form-control" id="emailEdit" name="email">
+                    </div>
+                    <!-- Password -->
+                    <div class="form-group">
+                        <input type="hidden" class="form-control" id="passwordEdit" name="password">
+                    </div>
+                    <!-- First Name Edit -->
+                    <div class="form-group">
+                        <label for="firstNameEdit" class="col-form-label">First Name:</label>
+                        <input type="text" class="form-control" id="firstNameEdit" name="firstName">
+                    </div>
+                    <!-- Last Name Edit -->
+                    <div class="form-group">
+                        <label for="lastNameEdit" class="col-form-label">Last Name:</label>
+                        <input type="text" class="form-control" id="lastNameEdit" name="lastName">
+                    </div>
+
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                    <button type="submit" class="btn btn-primary">Save</button>
+                </div>
+            </div>
+        </div>
+    </form>
+</div>
+
+                        <!-- Delete Modal Pop-up -->
+
+<div class="modal" tabindex="-1" role="dialog" id="deleteModal">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Confirm delete</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <p>Are you sure you want to delete this record?</p>
+            </div>
+            <div class="modal-footer">
+                <a href="" class="btn btn-danger" id="delRef">Yes, Delete</a>
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+<!--<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"-->
+<!--        integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj"-->
+<!--        crossorigin="anonymous"></script>-->
+<!--<script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js"-->
+<!--        integrity="sha384-9/reFTGAW83EW2RDu2S0VKaIzap3H66lZH81PoYlFhbGU+6BZp6G7niu735Sk7lN"-->
+<!--        crossorigin="anonymous"></script>-->
+<!--<script src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.3/dist/js/bootstrap.min.js"-->
+<!--        integrity="sha384-w1Q4orYjBQndcko6MimVbzY0tgp4pWB4lZ7lr30WKz0vr/aWKhXdBNmNb5D92v7s"-->
+<!--        crossorigin="anonymous"></script>-->
 </body>
 </html>
